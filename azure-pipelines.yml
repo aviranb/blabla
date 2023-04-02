@@ -17,3 +17,8 @@ steps:
     threads: '1'
     buildName: '$(Build.DefinitionName)'
     buildNumber: '$(Build.BuildNumber)'
+- task: JFrogPublishBuildInfo@1
+  inputs:
+    artifactoryConnection: 'robi-rt'
+    buildName: '$(Build.DefinitionName)'
+    buildNumber: '$(Build.BuildNumber)'
