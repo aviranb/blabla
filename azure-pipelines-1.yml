@@ -1,0 +1,37 @@
+trigger:
+  branches:
+    include:
+      - main
+
+pool:
+  vmImage: 'ubuntu-latest'
+
+variables:
+  npm_config_cache: $(Pipeline.Workspace)/.npm
+
+steps:
+  - task: NodeTool@0
+    inputs:
+      versionSpec: '14.x'
+    displayName: 'Install Node.js'
+
+  - task: Cache@2
+    inputs:
+      key: 'npm | "$(Agent.OS)" | package-lock.json'
+      restoreKeys: 'npm | "$(Agent.OS)"'
+      path: $(npm_config_cache)
+    displayName: 'Cache npm packages'
+
+  - script: npm install
+    displayName: 'Install npm packages'
+
+  - script: npm run build
+    displayName: 'Build application'
+
+  - script: npm run test
+    displayName: 'Run tests'
+
+  - task: JFrogArtifactoryGeneric@1
+    inputs:
+      serverDetails: 'myjfroginstance'
+      command: 'upload'
